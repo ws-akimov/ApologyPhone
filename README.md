@@ -119,10 +119,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #Summary
 You just need to do following steps:
 
-1. Make sure that you have installed (If you have problems with this read "Prerequisites"):
-	1.1 Node.js
-	1.2 MongoDB (On default port 27017)
-	1.3 Bower
+1. Make sure that you have installed (If you have problems with this read "Prerequisites"): Node.js, MongoDB (On default port 27017), Bower.
 
 2. Clone repository
 
@@ -142,8 +139,12 @@ You just need to do following steps:
 	$ grunt
 	```
 
+#My contacts
 If you have any problems here are my contacts (UTC+04:00):
-1. Phone number - +7(952) 605-86-49
-2. Skype: ws.akimov
-3. E-mail: ws.akimov@gmail.com
+
+* Phone number - +7(952) 605-86-49
+
+* Skype: ws.akimov
+
+* E-mail: ws.akimov@gmail.com
 
