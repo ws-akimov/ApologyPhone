@@ -30,5 +30,18 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
 				$scope.error = response.message;
 			});
 		};
+
+		$scope.forgotPassword = function() {
+			$scope.success = $scope.error = null;
+
+			$http.post('/users/forgot', $scope.forgot).success(function(response) {
+				// If successful show success message and clear form
+				$scope.success = true;
+				$scope.forgot = null;
+				$location.path('/signin');
+			}).error(function(response) {
+				$scope.error = response.message;
+			});
+		};
 	}
 ]);

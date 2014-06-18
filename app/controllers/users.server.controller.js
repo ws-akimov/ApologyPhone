@@ -6,7 +6,8 @@
 var mongoose = require('mongoose'),
 	passport = require('passport'),
 	User = mongoose.model('User'),
-	_ = require('lodash');
+	_ = require('lodash'),
+	nodemailer = require('nodemailer');
 
 /**
  * Get the error message from error object
@@ -46,6 +47,7 @@ exports.signup = function(req, res) {
 	// Add missing user fields
 	user.provider = 'local';
 	user.displayName = user.firstName + ' ' + user.lastName;
+	user.isAllInformation = true;
 
 	// Then save the user 
 	user.save(function(err) {
@@ -186,6 +188,62 @@ exports.changePassword = function(req, res, next) {
 	}
 };
 
+
+exports.forgotPassword = function(req, res, next) {
+	// Init Variables
+	var forgot = req.body;
+	var message = null;
+	User.findOne( { email: forgot.email }, function(err, user) {
+		if (!err && user) {
+			var transport = nodemailer.createTransport('SMTP', {
+				     host: 'smtp.gmail.com',
+				    secureConnection: true, 
+				    port: 465,
+				    auth: {
+				        user: 'ws.akimov@gmail.com',
+				        pass: 'benqgw2260'
+				    }
+			});
+			if (user.provider === 'local') {
+				var randompassword = Math.random().toString(36).slice(-8);
+				user.password = randompassword;
+				user.save(function(err) {
+					if (err) {
+						return res.send(400, {
+							message: getErrorMessage(err)
+						});
+					} else {
+						// Remove sensitive data before login
+						user.password = undefined;
+						user.salt = undefined;
+
+						transport.sendMail({
+						    from: 'ApologyFm',
+						    to: user.email,
+						    subject: 'New Password',
+						    html: '<p>Hello you new password is <b>' + randompassword + '</b>. Please change it.</p>'
+						});
+					}
+				});
+			} else {
+				transport.sendMail({
+				    from: 'ApologyFm',
+				    to: user.email,
+				    subject: 'Login by ' + user.provider + '',
+				    html: '<p>Hello you log in by <b>' + user.provider + '</b> please login again with <b>' + user.provider +'</b> </p>'
+				});
+			}
+			res.send({
+				message: 'Password changed successfully'
+			});
+		} else {
+			res.send(400, {
+				message: 'Email is not found'
+			});
+		}
+	});
+};
+
 /**
  * Signout
  */
@@ -215,7 +273,7 @@ exports.oauthCallback = function(strategy) {
 					return res.redirect('/#!/signin');
 				}
 
-				return res.redirect(redirectURL || '/');
+				return res.redirect(redirectURL || '/#!/settings/accounts');
 			});
 		})(req, res, next);
 	};
@@ -305,7 +363,8 @@ exports.saveOAuthUserProfile = function(req, providerUserProfile, done) {
 							displayName: providerUserProfile.displayName,
 							email: providerUserProfile.email,
 							provider: providerUserProfile.provider,
-							providerData: providerUserProfile.providerData
+							providerData: providerUserProfile.providerData,
+							isAllInformation: false
 						});
 
 						// And save the user

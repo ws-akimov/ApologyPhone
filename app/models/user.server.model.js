@@ -81,6 +81,9 @@ var UserSchema = new Schema({
 	created: {
 		type: Date,
 		default: Date.now
+	},
+	isAllInformation: {
+		type: Boolean
 	}
 });
 

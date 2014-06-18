@@ -29,7 +29,9 @@ module.exports = {
 			]
 		},
 		css: [
-			'public/modules/**/css/*.css'
+			'public/modules/**/css/*.css',
+			'public/modules/*.css',
+			'public/lib/fontawesome/css/*.min.css'
 		],
 		js: [
 			'public/config.js',

@@ -6,6 +6,7 @@ angular.module('core').controller('HeaderController', ['$scope', 'Authentication
 		$scope.isCollapsed = false;
 		$scope.menu = Menus.getMenu('topbar');
 
+
 		$scope.toggleCollapsibleMenu = function() {
 			$scope.isCollapsed = !$scope.isCollapsed;
 		};
@@ -14,5 +15,11 @@ angular.module('core').controller('HeaderController', ['$scope', 'Authentication
 		$scope.$on('$stateChangeSuccess', function() {
 			$scope.isCollapsed = false;
 		});
+		
+		// if (user) {
+		// 	if (user.isAllInformation === false) {
+		// 		$location.path('settings/accounts/');
+		// 	}
+		// }
 	}
 ]);
