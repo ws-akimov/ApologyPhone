@@ -3,12 +3,12 @@
 angular.module('users').controller('AuthenticationController', ['$scope', '$http', '$location', 'Authentication',
 	function($scope, $http, $location, Authentication) {
 		$scope.authentication = Authentication;
-
+		$scope.root = ApplicationConfiguration.apiRoot;
 		//If user is signed in then redirect back home
 		if ($scope.authentication.user) $location.path('/');
-
+		
 		$scope.signup = function() {
-			$http.post('/auth/signup', $scope.credentials).success(function(response) {
+			$http.post(ApplicationConfiguration.apiRoot + '/auth/signup', $scope.credentials).success(function(response) {
 				//If successful we assign the response to the global user model
 				$scope.authentication.user = response;
 
@@ -20,10 +20,10 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
 		};
 
 		$scope.signin = function() {
-			$http.post('/auth/signin', $scope.credentials).success(function(response) {
+			$http.post(ApplicationConfiguration.apiRoot + '/auth/signin', $scope.credentials).success(function(response) {
 				//If successful we assign the response to the global user model
 				$scope.authentication.user = response;
-
+				console.log($scope.authentication);
 				//And redirect to the index page
 				$location.path('/');
 			}).error(function(response) {
@@ -34,7 +34,7 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
 		$scope.forgotPassword = function() {
 			$scope.success = $scope.error = null;
 
-			$http.post('/users/forgot', $scope.forgot).success(function(response) {
+			$http.post(ApplicationConfiguration.apiRoot + '/users/forgot', $scope.forgot).success(function(response) {
 				// If successful show success message and clear form
 				$scope.success = true;
 				$scope.forgot = null;

@@ -1,0 +1,25 @@
+body {
+	background-color: #0778AE;
+	color: #FFFFFF;
+}
+
+.btn-default {
+	background: #56BA56;
+	color: white;
+	border-color: #56BA56;
+}
+	.btn-default:hover {
+		background: #49AE49;
+		color: white;
+		border-color: #49AE49;
+	}
+	.btn-default:active {
+		background: #49AE49;
+		color: white;
+		border-color: #49AE49;
+	}
+	.btn-default:focus {
+		background: #56BA56;
+		color: white;
+		border-color: #56BA56;
+	}
