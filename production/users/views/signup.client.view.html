@@ -1,0 +1,69 @@
+<section class="row" data-ng-controller="AuthenticationController">
+	<h3 class="col-md-12 text-center">Register using your social accounts</h3>
+	<div class="col-md-12 text-center">
+		<a href="/auth/facebook" class="undecorated-link">
+			<img src="/modules/users/img/buttons/facebook.png">
+		</a>
+		<a href="/auth/twitter" class="undecorated-link">
+			<img src="/modules/users/img/buttons/twitter.png">
+		</a>
+		<a href="/auth/google" class="undecorated-link">
+			<img src="/modules/users/img/buttons/google.png">
+		</a>
+	</div>
+	<h3 class="col-md-12 text-center">Or with your email</h3>
+	<div class="col-xs-offset-2 col-xs-8 col-md-offset-5 col-md-2">
+		<form data-ng-submit="signup()"  name="signUnForm" role="form" class="form-horizontal"  autocomplete="off">
+			<div class="form-group">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<span class="fa fa-user"></span>
+					</span>
+					<input class="form-control" type="text" name="username" data-ng-model="credentials.username"  placeholder="Username"/>
+				</div>
+				<span ng-show="signUnForm.email.$invalid">Email</span>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<span class="fa fa-envelope"></span>
+					</span>
+					<input class="form-control" type="email" name="email" data-ng-model="credentials.email"  placeholder="Email"/>
+				</div>
+				<span ng-show="signUnForm.email.$invalid">Email</span>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<span class="fa fa-asterisk"></span>
+					</span>
+					<input class="form-control" type="password" name="password" data-ng-model="credentials.password"  placeholder="Password"/>
+				</div>
+				<span ng-show="signInForm.password.$invalid">Password</span>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<span class="fa fa-male"></span>
+					</span>
+					<input class="form-control" type="text" name="firstName" data-ng-model="credentials.firstName"  placeholder="First Name"/>
+				</div>
+				<span ng-show="signUnForm.email.$invalid">Email</span>
+			</div>
+			<div class="form-group">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<span class="fa fa-male"></span>
+					</span>
+					<input class="form-control" type="text" name="lastName" data-ng-model="credentials.lastName"  placeholder="Last Name"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<button type="submit" class="btn btn-default col-md-12">Register</button>
+			</div>
+			<div class="form-group">
+				<a href="/#!/signin" class="btn btn-default col-md-12">Log In</a>
+			</div>
+		</form>
+	</div>
+</section>

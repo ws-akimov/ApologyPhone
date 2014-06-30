@@ -1,0 +1,19 @@
+<section data-ng-controller="ApologiesController" data-ng-init="find()">
+    <div class="page-header">
+        <h1>Apologies</h1>
+    </div>
+    <div class="list-group">
+        <a data-ng-repeat="apology in apologies" data-ng-href="#!/apologies/{{apology._id}}" class="list-group-item">
+			<small class="list-group-item-text">
+				Posted on
+				<span data-ng-bind="apology.created | date:'medium'"></span>
+				by
+				<span data-ng-bind="apology.user.displayName"></span>
+			</small>
+			<h4 class="list-group-item-heading" data-ng-bind="apology.name"></h4>
+        </a>
+    </div>
+    <div class="alert alert-warning text-center" data-ng-hide="!apologies.$resolved || apologies.length">
+    	No Apologies yet, why don't you <a href="/#!/apologies/create">create one</a>?
+    </div>
+</section>
