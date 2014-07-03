@@ -25,7 +25,7 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
 		$scope.removeUserSocialAccount = function(provider) {
 			$scope.success = $scope.error = null;
 
-			$http.delete(ApplicationConfiguration.apiRoot + '/users/accounts', {
+			$http.delete('/users/accounts', {
 				params: {
 					provider: provider
 				}
@@ -42,14 +42,7 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
 		$scope.updateUserProfile = function() {
 			$scope.success = $scope.error = null;
 			var user = new Users($scope.user);
-			console.log(user);
-			// $http.put(ApplicationConfiguration.apiRoot + '/users', user).success(function(response) {
-			// 				// If successful show success message and clear form
-			// 	$scope.success = true;
-			// 	Authentication.user = response;
-			// }).error(function(response) {
-			// 	$scope.error = response.data.message;
-			// });
+
 			user.$update(function(response) {
 				$scope.success = true;
 				Authentication.user = response;
@@ -62,7 +55,7 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
 		$scope.changeUserPassword = function() {
 			$scope.success = $scope.error = null;
 
-			$http.post(ApplicationConfiguration.apiRoot + '/users/password', $scope.passwordDetails).success(function(response) {
+			$http.post('/users/password', $scope.passwordDetails).success(function(response) {
 				// If successful show success message and clear form
 				$scope.success = true;
 				$scope.passwordDetails = null;

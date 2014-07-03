@@ -34787,96 +34787,6 @@ angular.module("template/typeahead/typeahead-popup.html", []).run(["$templateCac
     "</ul>");
 }]);
 
-(function(window){
-
-  var WORKER_PATH = 'recorderWorker.js';
-
-  var Recorder = function(source, cfg){
-    var config = cfg || {};
-    var bufferLen = config.bufferLen || 4096;
-    this.context = source.context;
-    this.node = (this.context.createScriptProcessor ||
-                 this.context.createJavaScriptNode).call(this.context,
-                                                         bufferLen, 2, 2);
-    var worker = new Worker(config.workerPath || WORKER_PATH);
-    worker.postMessage({
-      command: 'init',
-      config: {
-        sampleRate: this.context.sampleRate
-      }
-    });
-    var recording = false,
-      currCallback;
-
-    this.node.onaudioprocess = function(e){
-      if (!recording) return;
-      worker.postMessage({
-        command: 'record',
-        buffer: [
-          e.inputBuffer.getChannelData(0),
-          e.inputBuffer.getChannelData(1)
-        ]
-      });
-    }
-
-    this.configure = function(cfg){
-      for (var prop in cfg){
-        if (cfg.hasOwnProperty(prop)){
-          config[prop] = cfg[prop];
-        }
-      }
-    }
-
-    this.record = function(){
-      recording = true;
-    }
-
-    this.stop = function(){
-      recording = false;
-    }
-
-    this.clear = function(){
-      worker.postMessage({ command: 'clear' });
-    }
-
-    this.getBuffer = function(cb) {
-      currCallback = cb || config.callback;
-      worker.postMessage({ command: 'getBuffer' })
-    }
-
-    this.exportWAV = function(cb, type){
-      currCallback = cb || config.callback;
-      type = type || config.type || 'audio/wav';
-      if (!currCallback) throw new Error('Callback not set');
-      worker.postMessage({
-        command: 'exportWAV',
-        type: type
-      });
-    }
-
-    worker.onmessage = function(e){
-      var blob = e.data;
-      currCallback(blob);
-    }
-
-    source.connect(this.node);
-    this.node.connect(this.context.destination);    //this should not be necessary
-  };
-
-  Recorder.forceDownload = function(blob, filename){
-    var url = (window.URL || window.webkitURL).createObjectURL(blob);
-    var link = window.document.createElement('a');
-    link.href = url;
-    link.download = filename || 'output.wav';
-    var click = document.createEvent("Event");
-    click.initEvent("click", true, true);
-    link.dispatchEvent(click);
-  }
-
-  window.Recorder = Recorder;
-
-})(window);
-
 'use strict';
 
 // Use Applicaion configuration module to register a new module
@@ -35170,60 +35080,63 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
 		// Home state routing
 		$stateProvider.
 		state('about', {
-			url: apiRoot + '/about',
-			templateUrl: 'modules/core/views/about.client.view.html'
+			url: '/about',
+			templateUrl: 'core/views/about.client.view.html'
 		}).
 		state('feed', {
-			url: apiRoot + '/feed',
-			templateUrl: 'modules/core/views/feed.client.view.html'
+			url: '/feed',
+			templateUrl: 'core/views/feed.client.view.html'
 		}).
 		state('receiver-playback', {
-			url: apiRoot + '/receiver-playback',
-			templateUrl: 'modules/core/views/receiver-playback.client.view.html'
+			url: '/receiver-playback',
+			templateUrl: 'core/views/receiver-playback.client.view.html'
 		}).
 		state('confirmation', {
-			url: apiRoot + '/confirmation',
-			templateUrl: 'modules/core/views/confirmation.client.view.html'
+			url: '/confirmation',
+			templateUrl: 'core/views/confirmation.client.view.html'
 		}).
 		state('playback', {
-			url: apiRoot + '/playback',
-			templateUrl: 'modules/core/views/playback.client.view.html'
+			url: '/playback',
+			templateUrl: 'core/views/playback.client.view.html'
 		}).
 		state('submission', {
-			url: apiRoot + '/submission',
-			templateUrl: 'modules/core/views/submission.client.view.html'
+			url: '/submission',
+			templateUrl: 'core/views/submission.client.view.html'
 		}).
 		state('detail', {
-			url: apiRoot + '/detail',
-			templateUrl: 'modules/core/views/detail.client.view.html'
+			url: '/detail',
+			templateUrl: 'core/views/detail.client.view.html'
 		}).
 		state('share', {
-			url: apiRoot + '/share',
-			templateUrl: 'modules/core/views/share.client.view.html'
+			url: '/share',
+			templateUrl: 'core/views/share.client.view.html'
 		}).
 		state('contact-search', {
-			url: apiRoot + '/contact-search',
-			templateUrl: 'modules/core/views/contact-search.client.view.html'
+			url: '/contact-search',
+			templateUrl: 'core/views/contact-search.client.view.html'
 		}).
 		state('lodaing-page', {
-			url: apiRoot + '/lodaing-page',
-			templateUrl: 'modules/core/views/lodaing-page.client.view.html'
+			url: '/lodaing-page',
+			templateUrl: 'core/views/lodaing-page.client.view.html'
 		}).
 		state('home', {
-			url: apiRoot + '/',
-			templateUrl: 'modules/core/views/home.client.view.html'
+			url: '/',
+			templateUrl: 'core/views/home.client.view.html'
 		});
 	}
 ]);
 'use strict';
 
-angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Menus',
-	function($scope, Authentication, Menus) {
+angular.module('core').controller('HeaderController', ['$scope', 'Authentication', 'Menus', '$http',
+	function($scope, Authentication, Menus, $http) {
 		$scope.authentication = Authentication;
 		$scope.isCollapsed = false;
 		$scope.menu = Menus.getMenu('topbar');
 
-
+		$http.get(ApplicationConfiguration.apiRoot + '/').success(function(response) {
+				$scope.authentication.user = response;
+				console.log('SADDDDDDDDD', $scope.authentication);
+			});
 		$scope.toggleCollapsibleMenu = function() {
 			$scope.isCollapsed = !$scope.isCollapsed;
 		};
@@ -35249,123 +35162,123 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 		// This provides Authentication context.
 		$scope.authentication = Authentication;
 
-	    $scope.volumeLevel = 0;
-	    $scope.currentEditedSoundIndex = 0;
+	 //    $scope.volumeLevel = 0;
+	 //    $scope.currentEditedSoundIndex = 0;
 
-		$scope.startUserMedia = function (stream) {
-		  $scope.input = $scope.audio_context.createMediaStreamSource(stream);
-		  console.log('Media stream created.');
+		// $scope.startUserMedia = function (stream) {
+		//   $scope.input = $scope.audio_context.createMediaStreamSource(stream);
+		//   console.log('Media stream created.');
 
-		  $scope.volume = $scope.audio_context.createGainNode();
-		  $scope.volume.gain.value = $scope.volumeLevel;
-		  $scope.input.connect($scope.volume);
-		  $scope.volume.connect($scope.audio_context.destination);
-		  console.log('Input connected to audio context destination.');
+		//   $scope.volume = $scope.audio_context.createGainNode();
+		//   $scope.volume.gain.value = $scope.volumeLevel;
+		//   $scope.input.connect($scope.volume);
+		//   $scope.volume.connect($scope.audio_context.destination);
+		//   console.log('Input connected to audio context destination.');
 		  
-		  $scope.recorder = new Recorder($scope.input, {
-		  	workerPath: '/lib/Recorderjs/recorderWorker.js'
-		  });
-		  console.log('Recorder initialised.', $scope.recorder);
-		};
+		//   $scope.recorder = new Recorder($scope.input, {
+		//   	workerPath: '/lib/Recorderjs/recorderWorker.js'
+		//   });
+		//   console.log('Recorder initialised.', $scope.recorder);
+		// };
 
-		$scope.changeVolume = function () {
-		  if (!$scope.volume) return;
-		  $scope.volumeLevel = $scope.value;
-		  $scope.volume.gain.value = $scope.value;
-		};
+		// $scope.changeVolume = function () {
+		//   if (!$scope.volume) return;
+		//   $scope.volumeLevel = $scope.value;
+		//   $scope.volume.gain.value = $scope.value;
+		// };
 
-		$scope.startRecording = function () {
-		  $scope.recorder.record();
-		  console.log('Recording...');
-		};
+		// $scope.startRecording = function () {
+		//   $scope.recorder.record();
+		//   console.log('Recording...');
+		// };
 
-		$scope.stopRecording = function () {
-		  $scope.recorder.stop();
-		  console.log('Stopped recording.');
+		// $scope.stopRecording = function () {
+		//   $scope.recorder.stop();
+		//   console.log('Stopped recording.');
 		  
-		  // create WAV download link using audio data blob
-		  $scope.createDownloadLink();
+		//   // create WAV download link using audio data blob
+		//   $scope.createDownloadLink();
 		  
-		  $scope.recorder.clear();
-		};
+		//   $scope.recorder.clear();
+		// };
 
-		$scope.createDownloadLink = function () {
-		  $scope.currentEditedSoundIndex = -1;
-		  $scope.recorder && $scope.recorder.exportWAV($scope.handleWAV.bind(this));
-		};
+		// $scope.createDownloadLink = function () {
+		//   $scope.currentEditedSoundIndex = -1;
+		//   $scope.recorder && $scope.recorder.exportWAV($scope.handleWAV.bind(this));
+		// };
 
-		$scope.handleWAV = function (blob) {
-			console.log('handleWAV', blob);
-		$scope.blob = blob;
-		  $scope.tableRef = document.getElementById('recordingslist');
-		  console.log('handleWAV', $scope.tableRef);
-		  if ($scope.currentEditedSoundIndex !== -1) {
-		    $('#recordingslist tr:nth-child(' + ($scope.currentEditedSoundIndex + 1) + ')').remove();
-		  }
+		// $scope.handleWAV = function (blob) {
+		// 	console.log('handleWAV', blob);
+		// $scope.blob = blob;
+		//   $scope.tableRef = document.getElementById('recordingslist');
+		//   console.log('handleWAV', $scope.tableRef);
+		//   if ($scope.currentEditedSoundIndex !== -1) {
+		//     $('#recordingslist tr:nth-child(' + ($scope.currentEditedSoundIndex + 1) + ')').remove();
+		//   }
 
-		  $scope.url = URL.createObjectURL(blob);
-		  //$scope.newRow.className = 'soundBite';
-		  $scope.audioElement = document.createElement('audio');
-		  $scope.downloadAnchor = document.createElement('a');
-		  //$scope.editButton = document.createElement('button');
+		//   $scope.url = URL.createObjectURL(blob);
+		//   //$scope.newRow.className = 'soundBite';
+		//   $scope.audioElement = document.createElement('audio');
+		//   $scope.downloadAnchor = document.createElement('a');
+		//   //$scope.editButton = document.createElement('button');
 		  
-		  $scope.audioElement.controls = true;
-		  $scope.audioElement.src = $scope.url;
-		  angular.element(document.getElementById('recordingslist')).append(angular.element($scope.audioElement));
-		  $scope.downloadAnchor.href = $scope.url;
-		  $scope.downloadAnchor.download = new Date().toISOString() + '.wav';
-		  $scope.downloadAnchor.innerHTML = 'Download';
-		  $scope.downloadAnchor.className = 'btn btn-primary';
-		  console.log($scope.url);
-		  // editButton.innerHTML = 'Edit';
-		  // editButton.className = 'btn btn-primary';
+		//   $scope.audioElement.controls = true;
+		//   $scope.audioElement.src = $scope.url;
+		//   angular.element(document.getElementById('recordingslist')).append(angular.element($scope.audioElement));
+		//   $scope.downloadAnchor.href = $scope.url;
+		//   $scope.downloadAnchor.download = new Date().toISOString() + '.wav';
+		//   $scope.downloadAnchor.innerHTML = 'Download';
+		//   $scope.downloadAnchor.className = 'btn btn-primary';
+		//   console.log($scope.url);
+		//   // editButton.innerHTML = 'Edit';
+		//   // editButton.className = 'btn btn-primary';
 
-		  // $scope.newCell = $scope.newRow.insertCell(-1);
-		  // $scope.newCell.appendChild($scope.audioElement);
-		  // $scope.newCell = $scope.newRow.insertCell(-1);
-		  // $scope.newCell.appendChild($scope.downloadAnchor);
-		  // $scope.newCell = $scope.newRow.insertCell(-1);
-		  // // $scope.newCell.appendChild(editButton);
+		//   // $scope.newCell = $scope.newRow.insertCell(-1);
+		//   // $scope.newCell.appendChild($scope.audioElement);
+		//   // $scope.newCell = $scope.newRow.insertCell(-1);
+		//   // $scope.newCell.appendChild($scope.downloadAnchor);
+		//   // $scope.newCell = $scope.newRow.insertCell(-1);
+		//   // // $scope.newCell.appendChild(editButton);
 
-		  // $scope.newCell = $scope.newRow.insertCell(-1);
-		  // $scope.toggler;
-		  // for (var i = 0, l = 8; i < l; i++) {
-		  //   $scope.toggler = document.createElement('input');
-		  //   $($scope.toggler).attr('type', 'checkbox');
-		  //   $scope.newCell.appendChild($scope.toggler);
-		  // }
-		};
+		//   // $scope.newCell = $scope.newRow.insertCell(-1);
+		//   // $scope.toggler;
+		//   // for (var i = 0, l = 8; i < l; i++) {
+		//   //   $scope.toggler = document.createElement('input');
+		//   //   $($scope.toggler).attr('type', 'checkbox');
+		//   //   $scope.newCell.appendChild($scope.toggler);
+		//   // }
+		// };
 
-		$scope.editButton = function() {
-		    // $('.recorder.container').addClass('hide');
-		    // $('.editor.container').removeClass('invisible');
+		// $scope.editButton = function() {
+		//     // $('.recorder.container').addClass('hide');
+		//     // $('.editor.container').removeClass('invisible');
 
-		    // currentEditedSoundIndex = $(e.target).closest('tr').index();
+		//     // currentEditedSoundIndex = $(e.target).closest('tr').index();
 		    
-		    $scope.f = new FileReader();
-		    $scope.f.onload = function(e) {
-		        $scope.audio_context.decodeAudioData($scope.blob, function(buffer) {
-		          console.warn(buffer);
-		          //$('#audioLayerControl')[0].handleAudio(buffer);
-		        }, function(e) {
-		          console.warn(e);
-		        });
-		    };
-		    $scope.f.readAsArrayBuffer($scope.blob);
-		    console.log('asdasda', $scope.blob);
-		  };
+		//     $scope.f = new FileReader();
+		//     $scope.f.onload = function(e) {
+		//         $scope.audio_context.decodeAudioData($scope.blob, function(buffer) {
+		//           console.warn(buffer);
+		//           //$('#audioLayerControl')[0].handleAudio(buffer);
+		//         }, function(e) {
+		//           console.warn(e);
+		//         });
+		//     };
+		//     $scope.f.readAsArrayBuffer($scope.blob);
+		//     console.log('asdasda', $scope.blob);
+		//   };
 
-		window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
-		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.device.capture;
-		window.URL = window.URL || window.webkitURL || window.mozURL;
+		// window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
+		// navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.device.capture;
+		// window.URL = window.URL || window.webkitURL || window.mozURL;
 
-		$scope.audio_context = new AudioContext();
-		console.log('Audio context set up.');
-		console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
+		// $scope.audio_context = new AudioContext();
+		// console.log('Audio context set up.');
+		// console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
 		  
-		navigator.getUserMedia({audio: true}, $scope.startUserMedia, function(e) {
-			console.warn('No live audio input: ' + e);
-		});
+		// navigator.getUserMedia({audio: true}, $scope.startUserMedia, function(e) {
+		// 	console.warn('No live audio input: ' + e);
+		// });
 
 	}
 ]);
@@ -35618,28 +35531,28 @@ angular.module('users').config(['$stateProvider',
 		// Users state routing
 		$stateProvider.
 		state('forgot-password', {
-			url: apiRoot + '/forgot-password',
-			templateUrl: 'modules/users/views/forgot-password.client.view.html'
+			url: '/forgot-password',
+			templateUrl: 'users/views/forgot-password.client.view.html'
 		}).
 		state('profile', {
-			url: apiRoot + '/settings/profile',
-			templateUrl: 'modules/users/views/settings/edit-profile.client.view.html'
+			url: '/settings/profile',
+			templateUrl: 'users/views/settings/edit-profile.client.view.html'
 		}).
 		state('password', {
-			url: apiRoot + '/settings/password',
-			templateUrl: 'modules/users/views/settings/change-password.client.view.html'
+			url: '/settings/password',
+			templateUrl: 'users/views/settings/change-password.client.view.html'
 		}).
 		state('accounts', {
-			url: apiRoot + '/settings/accounts',
-			templateUrl: 'modules/users/views/settings/social-accounts.client.view.html'
+			url: '/settings/accounts',
+			templateUrl: 'users/views/settings/social-accounts.client.view.html'
 		}).
 		state('signup', {
-			url: apiRoot + '/signup',
-			templateUrl: 'modules/users/views/signup.client.view.html'
+			url: '/signup',
+			templateUrl: 'users/views/signup.client.view.html'
 		}).
 		state('signin', {
-			url: apiRoot + '/signin',
-			templateUrl: 'modules/users/views/signin.client.view.html'
+			url: '/signin',
+			templateUrl: 'users/views/signin.client.view.html'
 		});
 	}
 ]);
@@ -35648,12 +35561,12 @@ angular.module('users').config(['$stateProvider',
 angular.module('users').controller('AuthenticationController', ['$scope', '$http', '$location', 'Authentication',
 	function($scope, $http, $location, Authentication) {
 		$scope.authentication = Authentication;
-
+		$scope.root = ApplicationConfiguration.apiRoot;
 		//If user is signed in then redirect back home
 		if ($scope.authentication.user) $location.path('/');
-
+		
 		$scope.signup = function() {
-			$http.post('/auth/signup', $scope.credentials).success(function(response) {
+			$http.post(ApplicationConfiguration.apiRoot + '/auth/signup', $scope.credentials).success(function(response) {
 				//If successful we assign the response to the global user model
 				$scope.authentication.user = response;
 
@@ -35665,10 +35578,10 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
 		};
 
 		$scope.signin = function() {
-			$http.post('/auth/signin', $scope.credentials).success(function(response) {
+			$http.post(ApplicationConfiguration.apiRoot + '/auth/signin', $scope.credentials).success(function(response) {
 				//If successful we assign the response to the global user model
 				$scope.authentication.user = response;
-
+				console.log($scope.authentication);
 				//And redirect to the index page
 				$location.path('/');
 			}).error(function(response) {
@@ -35679,7 +35592,7 @@ angular.module('users').controller('AuthenticationController', ['$scope', '$http
 		$scope.forgotPassword = function() {
 			$scope.success = $scope.error = null;
 
-			$http.post('/users/forgot', $scope.forgot).success(function(response) {
+			$http.post(ApplicationConfiguration.apiRoot + '/users/forgot', $scope.forgot).success(function(response) {
 				// If successful show success message and clear form
 				$scope.success = true;
 				$scope.forgot = null;
@@ -35717,7 +35630,7 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
 		$scope.removeUserSocialAccount = function(provider) {
 			$scope.success = $scope.error = null;
 
-			$http.delete('/users/accounts', {
+			$http.delete(ApplicationConfiguration.apiRoot + '/users/accounts', {
 				params: {
 					provider: provider
 				}
@@ -35734,7 +35647,14 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
 		$scope.updateUserProfile = function() {
 			$scope.success = $scope.error = null;
 			var user = new Users($scope.user);
-
+			console.log(user);
+			// $http.put(ApplicationConfiguration.apiRoot + '/users', user).success(function(response) {
+			// 				// If successful show success message and clear form
+			// 	$scope.success = true;
+			// 	Authentication.user = response;
+			// }).error(function(response) {
+			// 	$scope.error = response.data.message;
+			// });
 			user.$update(function(response) {
 				$scope.success = true;
 				Authentication.user = response;
@@ -35747,7 +35667,7 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
 		$scope.changeUserPassword = function() {
 			$scope.success = $scope.error = null;
 
-			$http.post('/users/password', $scope.passwordDetails).success(function(response) {
+			$http.post(ApplicationConfiguration.apiRoot + '/users/password', $scope.passwordDetails).success(function(response) {
 				// If successful show success message and clear form
 				$scope.success = true;
 				$scope.passwordDetails = null;
@@ -35777,7 +35697,7 @@ angular.module('users').factory('Authentication', [
 // Users service used for communicating with the users REST endpoint
 angular.module('users').factory('Users', ['$resource',
 	function($resource) {
-		return $resource('users', {}, {
+		return $resource(ApplicationConfiguration.apiRoot + '/users', {}, {
 			update: {
 				method: 'PUT'
 			}
@@ -35904,7 +35824,6 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
 
 // Setting HTML5 Location Mode
 angular.module(ApplicationConfiguration.applicationModuleName)
- .constant('apiRoot', 'http://localhost:3000/')
 .config(['$locationProvider',
 	function($locationProvider) {
 		$locationProvider.hashPrefix('!');
@@ -35925,18 +35844,20 @@ angular.element(document).ready(function() {
 var ApplicationConfiguration = (function() {
 	// Init module configuration options
 	var applicationModuleName = 'apologyfm';
+	var apiRoot = 'http://localhost:3000';
 	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',  'ui.router', 'ui.bootstrap', 'ui.utils'];
 
 	// Add a new vertical module
 	var registerModule = function(moduleName) {
 		// Create angular module
+		console.log('moduleName', moduleName);
 		angular.module(moduleName, []);
-
 		// Add the module to the AngularJS configuration file
 		angular.module(applicationModuleName).requires.push(moduleName);
 	};
 
 	return {
+		apiRoot: apiRoot,
 		applicationModuleName: applicationModuleName,
 		applicationModuleVendorDependencies: applicationModuleVendorDependencies,
 		registerModule: registerModule

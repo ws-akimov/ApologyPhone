@@ -197,7 +197,7 @@ exports.forgotPassword = function(req, res, next) {
 		if (!err && user) {
 			var transport = nodemailer.createTransport('SMTP', {
 				     host: 'smtp.gmail.com',
-				    secureConnection: true,
+				    secureConnection: true, 
 				    port: 465,
 				    auth: {
 				        user: 'ws.akimov@gmail.com',
