@@ -5,6 +5,7 @@ module.exports = function(grunt) {
   var cssFilesToInject = [
     'public/lib/bootstrap/dist/css/bootstrap.css',
     'public/lib/bootstrap/dist/css/bootstrap-theme.css',
+    'public/lib/allmighty-autocomplete/style/*.css',
     'public/modules/*.css',
     'public/modules/**/*.css'
   ];
@@ -28,8 +29,10 @@ module.exports = function(grunt) {
     'public/lib/angular-ui-router/release/angular-ui-router.js',
     'public/lib/angular-ui-utils/ui-utils.js',
     'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
+    'public/lib/allmighty-autocomplete/script/autocomplete.js',
     'public/lib/ng-file-upload/**.js',
     'public/lib/Recorderjs/recorder.js',
+    'public/lib/lodash/dist/lodash.js',
     'public/config.js',
     'public/application.js',
     'public/modules/**/*.client.module.js',

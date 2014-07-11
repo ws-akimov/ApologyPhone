@@ -1,22 +1,43 @@
 <section data-ng-controller="ApologiesController">
     <div class="page-header">
-        <h1>New Apology</h1>
+        <h1>Create Apology</h1>
+        <h2>You can send apology to register user or on email if not</h2>
     </div>
     <div class="col-md-12">
-        <form class="form-horizontal" data-ng-submit="create()" novalidate>
+        <form class="form-horizontal" novalidate>
             <fieldset>
-                <div class="form-group">
-                    <label class="control-label" for="name">Name</label>
-                    <div class="controls">
-                        <input type="text" data-ng-model="name" id="name" class="form-control" placeholder="Name" required>
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="control-label" for="email">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <input type="radio" ng-model="seletedType" value="email">
+                                </span>
+                                <input type="email" data-ng-model="email" id="email" class="form-control" placeholder="Email" create="email">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label" for="username">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <input type="radio" ng-model="seletedType" value="username" checked="checked">
+                                </span>
+                                <autocomplete style="color:black" ng-model="username" data="users" on-type="updateUsers" placeholder="Username" create="username"></autocomplete>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <input type="submit" class="btn btn-default">
-                </div>
-				<div data-ng-show="error" class="text-danger">
-					<strong data-ng-bind="error"></strong>
-				</div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="input-group">
+                                <button ng-disabled="isEmpty" ng-click="captureAudio()" class="btn btn-default">Record Apology to {{receipient}}</button>
+                            </div>
+                            <div data-ng-show="error" class="text-danger">
+                                <strong data-ng-bind="error"></strong>
+                            </div>
+                        </div>
+                    </div>
+                <div>
             </fieldset>
         </form>
     </div>

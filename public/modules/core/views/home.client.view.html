@@ -13,15 +13,11 @@
 				an app to give and listen to 
 				apology
 			</h2>
-			<div>
-				<h1>AUDIO!!!</h1>
-				<audio controls>
-				  <source src="https://s3.amazonaws.com/ApologyFM/apoloogies/12345678/apologyWed+Jul+02+2014+16%3A06%3A06+GMT%2B0400+(MSK).wav" type="audio/wav">
-				Your browser does not support the audio element.
-				</audio>
-				<audio src='https://s3.amazonaws.com/ApologyFM/apoloogies/12345678/apologyWed+Jul+02+2014+16%3A06%3A06+GMT%2B0400+(MSK).wav'></audio>
+			<div>		
+				<div class="alert alert-warning text-center" data-ng-if="apology.$resolved && !apology.length">
+					No articles yet, why don't you <a href="#!/apology/create">create one</a>?
+				</div>
 			</div>
 		</div>
-		<button ng-click="captureAudio()" class="btn btn-ptimary">CLICK ME!</button>
 	</div>
 </section>

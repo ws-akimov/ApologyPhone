@@ -1,3 +1,44 @@
-<section data-ng-controller="YController">
-	This is the Playback
+<section data-ng-controller="PlaybackController">
+	<div class="col-md-12">
+        <div ng-show="myApologies.length != 0">
+		<h1>My Apologyes</h1>
+		<ul>
+			<li data-ng-repeat="myApology in myApologies" >
+				<div data-ng-href="#!/apology/{{apology._id}}">
+						<p>
+								Posted on
+							<p>{{myApology.created | date:'mediumDate'}}</p>
+								by
+							<p>{{myApology.userName}}</p>
+                            to
+                            <p>{{myApology.receipientName}}</p>
+						</p>
+						<audio controls>
+							<source type="audio/wav" ng-src=' {{ myApology.path }} ' controls="controls" preload="none">
+							Your browser does not support the audio element.
+						</audio>
+				</div>
+			</li>
+		</ul>
+        </div>
+        <div ng-show="forMeApologies.length != 0">
+		<h1>Apologyes for me</h1>
+		<ul>
+			<li data-ng-repeat="forMeApology in forMeApologies" >
+				<div data-ng-href="#!/apology/{{apology._id}}">
+						<p>
+								Posted on
+							<p>{{forMeApology.created | date:'mediumDate'}}</p>
+								by
+							<p>{{forMeApology.userName}}</p>
+						</p>
+						<audio controls>
+							<source type="audio/wav" ng-src=' {{ forMeApology.path }} ' controls="controls" preload="none">
+							Your browser does not support the audio element.
+						</audio>
+				</div>
+			</li>
+		</ul>
+        </div>
+	</div>
 </section>

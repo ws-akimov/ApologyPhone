@@ -25,7 +25,7 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
 		$scope.removeUserSocialAccount = function(provider) {
 			$scope.success = $scope.error = null;
 
-			$http.delete('/users/accounts', {
+			$http.delete(ApplicationConfiguration.apiRoot + '/users/accounts', {
 				params: {
 					provider: provider
 				}

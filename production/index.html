@@ -43,9 +43,10 @@
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
-            <span class="icon-bar"></span>d
+            <span class="icon-bar"></span>
         </button>
         <a href="#!/" class="navbar-brand">Apologyfm</a>
+        <a ng-show='isNotification' href="#!/playback">You has {{ notificationsCount }} apologies</a>
     </div>
     <nav class="collapse navbar-collapse" collapse="!isCollapsed" role="navigation">
         <ul class="nav navbar-nav" data-ng-if="menu.shouldRender(authentication.user);">

@@ -7,7 +7,8 @@ angular.module('users').factory('Authentication', [
 		var _this = this;
 
 		_this._data = {
-			user: window.user
+			user: window.user,
+			notifications: 0
 		};
 
 		return _this._data;
