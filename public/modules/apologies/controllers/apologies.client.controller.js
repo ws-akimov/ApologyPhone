@@ -138,16 +138,6 @@ angular.module('apologies').controller('ApologiesController', ['$scope', '$state
 			}
 		};
 
-		// Update existing Apology
-		$scope.update = function() {
-			var apology = $scope.apology ;
-
-			apology.$update(function() {
-				$location.path(ApplicationConfiguration.apiRoot + 'apologies/' + apology._id);
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
 
 		// Find a list of Apologies
 		$scope.find = function() {

@@ -21,5 +21,13 @@ angular.module('core').controller('PlaybackController', ['$scope', 'Authenticati
         }).error(function(response) {
             $scope.error = response.message;
         });
+
+        $scope.listened = function (apology) {
+            $http.put(ApplicationConfiguration.apiRoot + '/apologies/' + apology._id).success(function(response) {
+                console.log(response);
+            }).error(function(response) {
+                $scope.error = response.message;
+            });
+        }
     }
 ]);
